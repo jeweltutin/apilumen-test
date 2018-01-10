@@ -1,8 +1,27 @@
 <?php
-$fetchPosts = file_get_contents('http://localhost:8000/api/v1/posts/index');
+//$fetchPosts = file_get_contents('http://localhost:8000/api/v1/posts/index');
 //echo $fetchPosts;
+//$decodedPosts = json_decode($fetchPosts, true);
 
-$decodedPosts = json_decode($fetchPosts, true);
+require 'vendor/autoload.php';
+$client = new GuzzleHttp\Client();
+$res = $client->request('GET', 'http://localhost:8000/api/v1/posts/index', [
+    'headers' => [
+        'User-Agent' => 'testing/1.0',
+        'Accept'     => 'application/json',
+        'api_token'      => ['HppIxNGGANQA2bEhnZpo2y1x9Fn8x81sT76SRvcx5IPuwIbXM7zg1b42tSVx']
+    ]
+]);
+//echo $res->getStatusCode();
+// "200"
+//echo $res->getHeader('content-type');
+// 'application/json; charset=utf8'
+if($res->getStatusCode() == 200){
+	$decodedPosts = json_decode($res->getBody(),true);
+}else{
+	echo "Something wrong";
+}
+
 ?>
 
 
@@ -78,7 +97,8 @@ $decodedPosts = json_decode($fetchPosts, true);
     <div class="container">
       <!-- Example row of columns -->
       <div class="row">
-		<?php	  
+		<?php	
+		//print_r($decodedPost);
 		foreach($decodedPosts as $dpost){ ?>
 			<div class="col-md-4">
 			  <h2><?php echo $dpost['title']; ?></h2>
